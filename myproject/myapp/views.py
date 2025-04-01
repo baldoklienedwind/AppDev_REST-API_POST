@@ -10,10 +10,12 @@ def post_list(request):
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
+
     elif request.method == 'POST':
+        print("Incoming Data:", request.data)
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)
-            
-            return Response(serializer.errors, status=400)
+        
+        return Response(serializer.errors, status=400)
