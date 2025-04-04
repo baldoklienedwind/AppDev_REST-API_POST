@@ -11,11 +11,6 @@ function App() {
 
     return (
         <div>
-            <ul>
-                {posts.map((post) => (
-                    <li key={post.id}>{post.title}</li>
-                ))}
-            </ul>
             <TodoList />
         </div>
     );

@@ -52,10 +52,20 @@ export default function TodoList() {
 
   const toggleComplete = (id) => {
     const taskToUpdate = tasks.find((task) => task.id === id);
-    axios.put(`${API_URL}${id}/`, { ...taskToUpdate, completed: !taskToUpdate.completed })
-      .then((response) => setTasks(tasks.map((task) => (task.id === id ? response.data : task))))
+    
+    if (!taskToUpdate) return;
+  
+    axios
+      .put(`${API_URL}${id}/`, {
+        title: taskToUpdate.title,
+        content: taskToUpdate.content,
+        completed: !taskToUpdate.completed,
+      })
+      .then((response) => {
+        setTasks(tasks.map((task) => (task.id === id ? response.data : task)));
+      })
       .catch((error) => console.error("Error updating task:", error));
-  };
+  };  
 
   const startEditing = (id, title) => {
     setEditingIndex(id);
@@ -63,11 +73,23 @@ export default function TodoList() {
   };
 
   const saveEdit = (id) => {
-    axios.put(`${API_URL}${id}/`, { title: editText, content: "Updated content" })
-      .then((response) => setTasks(tasks.map((task) => (task.id === id ? response.data : task))))
+    const taskToUpdate = tasks.find((task) => task.id === id);
+    
+    if (!taskToUpdate) return;
+  
+    axios
+      .put(`${API_URL}${id}/`, {
+        title: editText,
+        content: taskToUpdate.content, 
+        completed: taskToUpdate.completed,
+      })
+      .then((response) => {
+        setTasks(tasks.map((task) => (task.id === id ? response.data : task)));
+        setEditingIndex(null);
+      })
       .catch((error) => console.error("Error updating task:", error));
-    setEditingIndex(null);
   };
+  
 
   const filteredTasks = tasks.filter((task) => {
     if (filter === "completed") return task.completed;
